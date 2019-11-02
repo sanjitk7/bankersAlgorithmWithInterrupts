@@ -1,77 +1,6 @@
 //a circular queue
 #include <stdio.h>
-#define SIZE 5
-
-
-
-int interrupt_wait[SIZE][4];
-//int interrupt_resources[SIZE][3];//3 is the number of resources
-int front = -1, rear =-1;
-int isFull()
-{
-    if( (front == rear + 1) || (front == 0 && rear == SIZE-1)) return 1;
-    return 0;
-}
-int isEmpty()
-{
-    if(front == -1) return 1;
-    return 0;
-}
-void enQueue(int element)
-{
-    int i=0;
-    if(isFull()) printf("\n Interrupt Queue is full!! \n");
-    else
-    {
-        if(front == -1) front = 0;
-        rear = (rear + 1) % SIZE;
-        interrupt_wait[rear][0] = element;
-        printf("\nEnter the resources required for the initiated hardware interrupt:\n");
-                    for (i=1;i<4;i++) {
-                        scanf("%d",&interrupt_wait[rear][i]);
-                    }//3 is number of resources
-                }
-        printf("\n Inserted -> %d", element);
-    }
-
-
-int deQueue()
-{
-    int element;
-    if(isEmpty()) {
-        printf("\n Interrupt Queue is empty !! \n");
-        return(-1);
-    } else {
-        element = interrupt_wait[front][0];
-        if (front == rear){
-            front = -1;
-            rear = -1;
-        } /* Q has only one element, so we reset the queue after dequeing it. ? */
-        else {
-            front = (front + 1) % SIZE;
-            
-        }
-        printf("\n Deleted interrupt PID -> %d \n", element);
-        return 0;
-    }
-}
-void display()
-{
-    int i,j;
-    if(isEmpty()) printf(" \n Empty Queue\n");
-    else
-    {
-        printf("\n Front -> %d ",front);
-        printf("\n interrupt_wait:\n ");
-        for( i = front; i!=rear+1; i=(i+1)%SIZE) {
-            for (j=0;j<4;j++){
-            printf("%d \t",interrupt_wait[i][j]);
-        }
-        printf("\n");
-    }
-        printf("\n Rear -> %d \n",rear);
-    }
-}
+#include "queue.h"
 
 int process_main(){ 
     // P0, P1, P2, P3, P4 are the Process names here 
@@ -185,9 +114,9 @@ int process_main(){
         sleep(1);
         fflush(stdout);
     }
-if (!isEmpty()){
+/*if (!isEmpty()){
     printf("\nInterrupt %d could not be granted because required resources are too high!!\n",interrupt_wait[front][0]);
-} 
+} */
     printf("\nSAFE SEQUENCE GENERATED FOR THE PROCESSES IN THE CURRENT STATE IS : \n"); 
     for (i = 0; i < n - 1; i++) 
         printf(" P%d ->", ans[i]); 
