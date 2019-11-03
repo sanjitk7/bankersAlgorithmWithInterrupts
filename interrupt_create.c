@@ -10,10 +10,10 @@ void *interrupt_main(void *arg)
 {
 	struct timeval rt;
 	int interrupt_resources[4];
-	int i,int_id_start=100;
-	time_t t;
+	int i,temp_rand,int_id_start=100;
 	while (1)
 	{
+		temp_rand=0;
 		gettimeofday(&rt,NULL);
 		srand(ct.tv_sec*1000000+ct.tv_usec);
 		interrupt_resources[0]=int_id_start;
@@ -26,7 +26,10 @@ void *interrupt_main(void *arg)
 		log_message("INTERRUPT_ADDED",buf);
 		fflush(stdout);
 		enQueue(interrupt_resources);
-		sleep(rand()%3);
+		while(temp_rand==0){
+			temp_rand=rand()%3;
+		}
+		sleep(temp_rand);
 		int_id_start++;
 	}
 	return 0;

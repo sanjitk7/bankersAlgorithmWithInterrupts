@@ -78,13 +78,11 @@ void *process_main(void *arg)
                         log_message("SUCCESS:INTERRUPT_DETECTED","");
                         //check if the interrupt can be granted
                         processed_first = -1;
-                        printf("BEFIRE WHILE SIZE OF INT_Q - %d",getSize());
                         while (!isEmpty())
                         {
                             if (topInterruptId() == processed_first)
                             {
-                                printf("BEFORE TERMITATION_CHECK : SIZE OF INT_Q - %d",getSize());                          
-                                printf("PROCESSED_ALL_WAITING_INTERRUPTS\n");
+                                printf("PROCESSED_ALL_POSSIBLE_WAITING_INTERRUPTS\n");
                                 break;
                             }
 
@@ -99,19 +97,16 @@ void *process_main(void *arg)
                             log_message("CHECKING_RESOURCE_REQ_OF",buf);
                             fflush(stdout);
                             memset(buf,0,99);
-                            /*for (x=0;x<3;x++)
-                                buf[x]=((char)avail[x]);
-                            */
                             for (x=0;x<3;x++)
                             {
                                 printf("%d\t",avail[x]);
                             }
                             //log_message("DISPLAY_AVAIL[]",buf);
-                            printf("\ntemp_arr:");
-                            printf("\ntemp array[0] %d",temp_arr[0]);
-                            printf("\ntemp array[1] %d",temp_arr[1]);
-                            printf("\ntemp array[2] %d",temp_arr[2]);
-                            printf("\ntemp array[3] %d",temp_arr[3]);
+                            printf("\nTEMP_ARR:");
+                            for (x=0;x<m+1;x++)
+                            {
+                                printf("%d\t",temp_arr[x]);
+                            }
                             printf("\n");
                             //couldnt find a way to convert arrays of avail and temp_arr into strings and call log_message 
                             not_en=0;
