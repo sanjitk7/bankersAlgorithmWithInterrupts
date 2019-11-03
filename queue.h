@@ -5,7 +5,7 @@
 extern int front;
 extern int rear;
 extern int interrupt_wait[SIZE][4];
-void init();
+// void init();
 void enQueue(int interrupt_resources[]);
 int deQueue();
 int isEmpty();

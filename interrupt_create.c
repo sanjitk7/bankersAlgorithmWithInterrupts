@@ -1,13 +1,16 @@
-#include<stdio.h>
-#include<pthread.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "queue.h"
 
-int interrupt_main(){
-	int interrupt_resources[4]={100,2,2,2};
-	while(1){
+void *interrupt_main(void *arg)
+{
+	int interrupt_resources[4] = {100, 2, 2, 2};
+	while (1)
+	{
 		enQueue(interrupt_resources);
+		sleep(1);
 	}
 	return 0;
 }
