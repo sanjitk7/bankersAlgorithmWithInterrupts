@@ -72,11 +72,11 @@ void *process_main(void *arg)
                     log_message("CHECKING_INT_QUEUE","");
                     if (isEmpty())
                     {
-                        log_message("FAILED:NO_INTERRUPT","");
+                        log_message("FAILED:NO_INTERRUPT_DETECTED","");
                     }
                     else
                     {
-                        printf("\n [thread 1] Interrupt Detected!");
+                        log_message("SUCCESS:INTERRUPT_DETECTED","");
                         //check if the interrupt can be granted
                         processed_first = -1;
                         while (!isEmpty())
@@ -92,19 +92,27 @@ void *process_main(void *arg)
                             {
                                 break;
                             }
-                            printf("\n[thread 1]Checking %d Resource Req\n", temp_arr[0]);
+                            memset(buf,0,99);
+                            sprintf(buf,"%d",temp_arr[0]);
+                            log_message("CHECKING_RESOURCE_REQ_OF",buf);
                             fflush(stdout);
-                            //log_message("check_res_req");
-                            printf("Available is:");
+                            memset(buf,0,99);
+                            /*for (x=0;x<3;x++)
+                                buf[x]=((char)avail[x]);
+                            */
                             for (x=0;x<3;x++)
+                            {
                                 printf("%d\t",avail[x]);
+                            }
+                            //log_message("DISPLAY_AVAIL[]",buf);
                             printf("\ntemp_arr:");
-                            printf("temp array[0] %d",temp_arr[0]);
-                            printf("temp array[1] %d",temp_arr[1]);
-                            printf("temp array[2] %d",temp_arr[2]);
-                            printf("temp array[3] %d",temp_arr[3]);
+                            printf("\ntemp array[0] %d",temp_arr[0]);
+                            printf("\ntemp array[1] %d",temp_arr[1]);
+                            printf("\ntemp array[2] %d",temp_arr[2]);
+                            printf("\ntemp array[3] %d",temp_arr[3]);
                             printf("\n");
-                            
+                            //couldnt find a way to convert arrays of avail and temp_arr into strings and call log_message 
+
                             for (x = 1; x < m + 1; x++)
                             {
                                 if (temp_arr[x] > avail[x-1])
@@ -115,7 +123,9 @@ void *process_main(void *arg)
                             }
                             if (not_en == 1)
                             {
-                                printf("[th 1]]nterrupt %d Cannot be executed: Not enough resources. Waiting for resources to be freed\n", temp_arr[0]);
+                                // memset(buf,0,99);
+                                // sprintf(buf,"%d",temp_arr[0]);
+                                printf("FAILED_NOT_ENOUGH_RESOURCES_PUSH_BACK_AGAIN","");
                                 fflush(stdout);
                                 processed_first = temp_arr[0];
                                 enQueue(temp_arr);
@@ -123,7 +133,9 @@ void *process_main(void *arg)
 
                             if (not_en == 0)
                             {
-                                printf("[th 1]Interrupt %d is executed now! Resources are used and freed immedietly\n", temp_arr[0]);
+                                memset(buf,0,99);
+                                sprintf(buf,"%d",temp_arr[0]);
+                                printf("SUCCESS_INTERRUPT_IS_PROCESSED_RESOURCES_USED_AND_FREED", temp_arr[0]);
                                 fflush(stdout);
                             }
                         }

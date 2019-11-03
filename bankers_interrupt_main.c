@@ -2,21 +2,29 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
+#include "common.h"
 #include "queue.h"
 #include "interrupt_create.h"
 #include "bankers_process.h"
-#include "common.h"
+
 int main()
 {
     pthread_t thread_banker, thread_interrupt;
-    printf("Before Thread\n");
-    printf("%d Self pthread thread_id\n", (int)pthread_self());
+
+    log_message("BEFORE_THREADING","");
+    // memset(buf,0,99);
+    // sprintf(buf,"%d",(int)pthread_self());
+    // log_message("SELF_MAIN_THREAD_ID\n",buf);
     pthread_create(&thread_banker, NULL, process_main, NULL);
-    printf("%d Bankers Thread thread_id\n", (int)thread_banker);
+    memset(buf,0,99);
+    sprintf(buf,"%d",(int)thread_banker);
+    log_message("PROCESS_THREAD_START",buf);
     pthread_create(&thread_interrupt, NULL, interrupt_main, NULL);
-    printf("%d Interrupt Thread thread_id\n", (int)interrupt_main);
+    memset(buf,0,99);
+    sprintf(buf,"%d",(int)thread_interrupt);
+    log_message("INTERRUPT_THREAD_START",buf);
     pthread_join(thread_banker, NULL);
     pthread_cancel(thread_interrupt);
-    printf("After Thread\n");
+    printf("AFTER_THREADING\n");
     exit(0);
 }
