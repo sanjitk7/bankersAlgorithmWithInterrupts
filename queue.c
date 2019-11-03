@@ -59,9 +59,9 @@ void enQueue(int interrupt_resources[])
         printf("\n Inserted Interrupt : %d", interrupt_resources[0]);
     }
 }
-int deQueue()
+int* deQueue()
 {
-    int element;
+    int i,send_top_arr[4];
     if (isEmpty())
     {
         printf("\n Interrupt Queue is empty !! \n");
@@ -69,7 +69,10 @@ int deQueue()
     }
     else
     {
-        element = interrupt_wait[front][0];
+        for (i=0;i<4;i++){
+            send_top_arr[i]=interrupt_wait[front][i];
+        }
+        printf("\n Deleted interrupt PID -> %d \n", interrupt_wait[front][0]);
         if (front == rear)
         {
             front = -1;
@@ -79,7 +82,6 @@ int deQueue()
         {
             front = (front + 1) % SIZE;
         }
-        printf("\n Deleted interrupt PID -> %d \n", element);
-        return 0;
+        return send_top_arr;
     }
 }

@@ -9,6 +9,8 @@ void *interrupt_main(void *arg)
 	int interrupt_resources[4] = {100, 2, 2, 2};
 	while (1)
 	{
+		printf("\nadding interrupt!\n");
+		fflush(stdout);
 		enQueue(interrupt_resources);
 		sleep(1);
 	}

@@ -7,7 +7,8 @@ void *process_main(void *arg)
 {
     // P0, P1, P2, P3, P4 are the Process names here
 
-    int n, m, i, j, k, x, interrupt_choice, temp, interrupt_count = 0, not_en = 0;
+    int n, m, i, j, k, x, interrupt_choice,processed_first, temp, interrupt_count = 0, not_en = 0;
+    int* temp_arr;
     n = 5;                         // Number of processes
     m = 3;                         // Number of resources
     int alloc[5][3] = {{0, 1, 0},  // P0    // Allocation Matrix
@@ -87,10 +88,36 @@ void *process_main(void *arg)
                     else
                     {
                         printf("\nInterrupt Detected!");
-                        //check if the interrupt can be granted
-
+                        //check if the interrupt can be granted                        
+                        processed_first=-1;
+                        while(!isEmpty()){
+                        
+                        temp_arr=deQueue();
+                        if (temp_arr[0]==processed_first)
+                            break;
+                            printf("\nChecking %d Resource Req\n",temp_arr[0]);
+                            fflush(stdout);
+                            for (x=1;x<m+1;x++){
+                                if (interrupt_wait[front][x]>avail[x]){
+                                    not_en=1;
+                                    break;
+                                }
+                            if (not_en==1){
+                                printf("Interrupt %d Cannot be executed: Not enough resources. Waiting for resources to be freed\n",temp_arr[0]);
+                                fflush(stdout);
+                                processed_first=temp_arr[0];
+                                //enQueue(temp_arr);
+                            }
+                        
+                            if (not_en==0){
+                                printf("Interrupt %d is executed now! Resources are used and freed immedietly\n",temp_arr[0]);
+                                fflush(stdout);
+                                
+                        }
+                            }
+                        }
                         /*for (x=1;x<4;x++){
-                            if (interrupt_wait[front][i]>avail[i]){
+                            if (interrupt_wait[front][x]>avail[x]){
                                 not_en=1;
                                 break;
                                 }
