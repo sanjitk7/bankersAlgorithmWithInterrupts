@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include "queue.h"
 #include "common.h"
@@ -13,14 +13,14 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 void display()
 {
     int i, j;
-    printf("\n[%d] DISPLAYING INTERRUPT\n",(int)pthread_self());
+    printf("\n[%d] DISPLAYING INTERRUPT\n", (int)pthread_self());
     if (isEmpty())
-        printf(" \n[%d] QUEUE IS EMPTY!\n",(int)pthread_self());
+        printf(" \n[%d] QUEUE IS EMPTY!\n", (int)pthread_self());
     else
     {
-        printf("\n[%d] FRONT : %d\n",(int)pthread_self(),front);
-        printf("[%d] INTERRUPT_WAIT: %d\n",(int)pthread_self());
-        for (i = front; i != rear + 1; i = (i + 1) % SIZE)
+        printf("\n[%d] FRONT : %d\n", (int)pthread_self(), front);
+        printf("[%d] INTERRUPT_WAIT: ", (int)pthread_self());
+        for (i = front; i != rear; i = (i + 1) % SIZE)
         {
             for (j = 0; j < 4; j++)
             {
@@ -28,33 +28,36 @@ void display()
             }
             printf("\n");
         }
-        printf("\n[%d] REAR :%d\n",(int)pthread_self(), rear);
+        printf("\n[%d] REAR :%d\n", (int)pthread_self(), rear);
+        fflush(stdout);
     }
 }
 
-int topInterruptId(){
+int topInterruptId()
+{
     if (isEmpty())
     {
         return (-1);
     }
-    else{
+    else
+    {
         return interrupt_wait[front][0];
     }
 }
 
 int getSize()
 {
-    if (front==-1 && rear==-1)
+    if (front == -1 && rear == -1)
     {
         return 0;
     }
-    else if (front==rear)
+    else if (front == rear)
     {
         return 1;
     }
     else
     {
-        return abs(front-rear);
+        return abs(front - rear);
     }
 }
 int isFull()
@@ -91,18 +94,19 @@ void enQueue(int interrupt_resources[])
         printf("\n[th q] INTERRUPT INSERTED IS : %d", interrupt_resources[0]);
     }
 }
-int* deQueue()
+int *deQueue()
 {
-    int i,send_top_arr[4];
+    int i, send_top_arr[4];
     if (isEmpty())
     {
         printf("\n[th q] INTERRUPT QUEUE IS EMPTY! \n");
-        return (-1);
+        return NULL;
     }
     else
     {
-        for (i=0;i<4;i++){
-            send_top_arr[i]=interrupt_wait[front][i];
+        for (i = 0; i < 4; i++)
+        {
+            send_top_arr[i] = interrupt_wait[front][i];
         }
         printf("\n[th q] INTERRUPT DEQUEUED IS : %d \n", interrupt_wait[front][0]);
         if (front == rear)

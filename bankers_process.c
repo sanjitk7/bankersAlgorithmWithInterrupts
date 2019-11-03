@@ -12,6 +12,7 @@ void *process_main(void *arg)
     int n, m, i, j, k, x, interrupt_choice, processed_first, temp, interrupt_count = 0, not_en = 0;
     int *temp_ptr;
     int temp_arr[4];
+    char tbuf[100];
     n = 5;                         // Number of processes
     m = 3;                         // Number of resources
     int alloc[5][3] = {{0, 1, 0},  // P0    // Allocation Matrix
@@ -64,55 +65,61 @@ void *process_main(void *arg)
                         avail[y] += alloc[i][y]; //resource is freed up
                     f[i] = 1;                    //set finish to 1
                     sleep(1);
-                    memset(buf,0,99);
-                    sprintf(buf,"P%d",i);
-                    log_message("PROCESS_EXECUTED",buf);
+                    memset(buf, 0, 99);
+                    sprintf(buf, "P%d", i);
+                    log_message("PROCESS_EXECUTED", buf);
                     //now check if the interrupt wait queue is not empty
-                    log_message("CHECKING_INT_QUEUE","");
+                    log_message("CHECKING_INT_QUEUE", "");
                     if (isEmpty())
                     {
-                        log_message("FAILED:NO_INTERRUPT_DETECTED","");
+                        log_message("FAILED:NO_INTERRUPT_DETECTED", "");
                     }
                     else
                     {
-                        log_message("SUCCESS:INTERRUPT_DETECTED","");
+                        log_message("SUCCESS:INTERRUPT_DETECTED", "");
                         //check if the interrupt can be granted
                         processed_first = -1;
                         while (!isEmpty())
                         {
                             if (topInterruptId() == processed_first)
                             {
-                                printf("PROCESSED_ALL_POSSIBLE_WAITING_INTERRUPTS\n");
+                                log_message("PROCESSED_ALL_POSSIBLE_WAITING_INTERRUPTS", " ");
                                 break;
                             }
 
                             temp_ptr = deQueue();
-                            for (x=0;x<4;x++)
+                            for (x = 0; x < 4; x++)
                             {
-                                temp_arr[x]= *(int*)(temp_ptr + x);
+                                temp_arr[x] = *(int *)(temp_ptr + x);
                             }
-                            
-                            memset(buf,0,99);
-                            sprintf(buf,"%d",temp_arr[0]);
-                            log_message("CHECKING_RESOURCE_REQ_OF",buf);
-                            fflush(stdout);
-                            memset(buf,0,99);
-                            for (x=0;x<3;x++)
+
+                            memset(buf, 0, 99);
+                            sprintf(buf, "[");
+                            for (x = 0; x < 3; x++)
                             {
-                                printf("%d\t",avail[x]);
+                                memset(tbuf, 0, 99);
+                                sprintf(tbuf, "%d ", avail[x]);
+                                strcat(buf, tbuf);
                             }
-                            //log_message("DISPLAY_AVAIL[]",buf);
-                            printf("\nTEMP_ARR:");
-                            for (x=0;x<m+1;x++)
+                            strcat(buf, "]");
+                            log_message("CHECKING_AVLBL_RESOURCE", buf);
+
+                            memset(buf, 0, 99);
+                            sprintf(buf, "[");
+                            for (x = 0; x < m + 1; x++)
                             {
-                                printf("%d\t",temp_arr[x]);
+                                memset(tbuf, 0, 99);
+                                sprintf(tbuf, "%d ", temp_arr[x]);
+                                strcat(buf, tbuf);
                             }
-                            printf("\n");
-                            //couldnt find a way to convert arrays of avail and temp_arr into strings and call log_message 
-                            not_en=0;
+                            strcat(buf, "]");
+                            log_message("CHECKING_INT_NEED", buf);
+
+                            //couldnt find a way to convert arrays of avail and temp_arr into strings and call log_message
+                            not_en = 0;
                             for (x = 1; x < m + 1; x++)
                             {
-                                if (temp_arr[x] > avail[x-1])
+                                if (temp_arr[x] > avail[x - 1])
                                 {
                                     not_en = 1;
                                     break;
@@ -120,21 +127,19 @@ void *process_main(void *arg)
                             }
                             if (not_en == 1)
                             {
-                                // memset(buf,0,99);
-                                // sprintf(buf,"%d",temp_arr[0]);
-                                printf("FAILED_NOT_ENOUGH_RESOURCES_PUSH_BACK_AGAIN","");
-                                fflush(stdout);
-                                if (processed_first==-1)
+                                memset(buf, 0, 99);
+                                sprintf(buf, "%d", temp_arr[0]);
+                                log_message("FAILED_NOT_ENOUGH_RESOURCES_PUSH_BACK_AGAIN", buf);
+                                if (processed_first == -1)
                                     processed_first = temp_arr[0];
                                 enQueue(temp_arr);
                             }
 
                             if (not_en == 0)
                             {
-                                memset(buf,0,99);
-                                sprintf(buf,"%d",temp_arr[0]);
-                                printf("SUCCESS_INTERRUPT_IS_PROCESSED_RESOURCES_USED_AND_FREED", temp_arr[0]);
-                                fflush(stdout);
+                                memset(buf, 0, 99);
+                                sprintf(buf, "%d", temp_arr[0]);
+                                log_message("SUCCESS_INTERRUPT_IS_PROCESSED_RESOURCES_USED_AND_FREED", buf);
                             }
                         }
                     }
@@ -146,9 +151,17 @@ void *process_main(void *arg)
     printf("\nInterrupt %d could not be granted because required resources are too high!!\n",interrupt_wait[front][0]);
 } */
     printf("\nSAFE SEQUENCE GENERATED FOR THE PROCESSES IN THE CURRENT STATE IS : \n");
+    memset(buf, 0, 99);
     for (i = 0; i < n - 1; i++)
-        printf(" P%d ->", ans[i]);
-    printf(" P%d", ans[n - 1]);
+    {
+        memset(tbuf, 0, 99);
+        sprintf(tbuf, " P%d ->", ans[i]);
+        strcat(buf, tbuf);
+    }
+    memset(tbuf, 0, 99);
+    sprintf(tbuf, " P%d", ans[n - 1]);
+    strcat(buf, tbuf);
+    log_message("SAFE_SEQUENCE_COMPUTED", buf);
 
     return 0;
 }

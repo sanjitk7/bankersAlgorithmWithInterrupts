@@ -10,24 +10,32 @@ void *interrupt_main(void *arg)
 {
 	struct timeval rt;
 	int interrupt_resources[4];
-	int i,temp_rand,int_id_start=100;
+	int i, temp_rand, int_id_start = 100;
+	char lbuf[100];
+	char tbuf[10];
 	while (1)
 	{
-		temp_rand=0;
-		gettimeofday(&rt,NULL);
-		srand(ct.tv_sec*1000000+ct.tv_usec);
-		interrupt_resources[0]=int_id_start;
-		for (i=1;i<4;i++)
+		memset(lbuf, 0, 99);
+		temp_rand = 0;
+		gettimeofday(&rt, NULL);
+		srand(ct.tv_sec * 1000000 + ct.tv_usec);
+		interrupt_resources[0] = int_id_start;
+
+		sprintf(lbuf, "[ %d ", int_id_start);
+		for (i = 1; i < 4; i++)
 		{
-			interrupt_resources[i]= rand()%7;
+			memset(tbuf, 0, 9);
+			interrupt_resources[i] = rand() % 7;
+			sprintf(tbuf, "%d ", interrupt_resources[i]);
+			strcat(lbuf, tbuf);
 		}
-		memset(buf,0,99);
-		sprintf(buf,"%d",(int)pthread_self());
-		log_message("INTERRUPT_ADDED",buf);
+		strcat(lbuf, "]");
+		log_message("INTERRUPT_QUEUED", lbuf);
 		fflush(stdout);
 		enQueue(interrupt_resources);
-		while(temp_rand==0){
-			temp_rand=rand()%3;
+		while (temp_rand == 0)
+		{
+			temp_rand = rand() % 3;
 		}
 		sleep(temp_rand);
 		int_id_start++;
