@@ -8,6 +8,8 @@ extern int interrupt_wait[SIZE][4];
 // void init();
 void enQueue(int interrupt_resources[]);
 int* deQueue();
+int topInterruptId();
+int getSize();
 int isEmpty();
 int isFull();
 void display();

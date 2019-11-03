@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include<stdlib.h>
+#include <pthread.h>
 #include "queue.h"
 #include "common.h"
 
@@ -6,6 +8,7 @@
 int front = -1;
 int rear = -1;
 int interrupt_wait[SIZE][4];
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void display()
 {
@@ -15,7 +18,7 @@ void display()
         printf(" \n[th ] Empty Queue\n");
     else
     {
-        printf("\n[th %d] Front -> %d ",(int)pthread_self());
+        printf("\n[th %d] Front -> %d ",(int)pthread_self(),front);
         printf("\n[th %d] interrupt_wait:\n ",(int)pthread_self());
         for (i = front; i != rear + 1; i = (i + 1) % SIZE)
         {
@@ -29,6 +32,33 @@ void display()
     }
 }
 
+int topInterruptId(){
+    if (isEmpty())
+    {
+        return (-1);
+    }
+    else{
+        printf("interrupt_wait[front][0] : %d",interrupt_wait[front][0]);
+        return interrupt_wait[front][0];
+    }
+}
+
+int getSize()
+{
+    printf("front :%d \trear:%d\n",front,rear);
+    if (front==-1 && rear==-1)
+    {
+        return 0;
+    }
+    else if (front==rear)
+    {
+        return 1;
+    }
+    else
+    {
+        return abs(front-rear);
+    }
+}
 int isFull()
 {
     if ((front == rear + 1) || (front == 0 && rear == SIZE - 1))
@@ -44,10 +74,12 @@ int isEmpty()
 void enQueue(int interrupt_resources[])
 {
     int i = 0;
+
     if (isFull())
         printf("\n[th q] Interrupt Queue is full!! \n");
     else
     {
+        pthread_mutex_lock(&mutex);
         if (front == -1)
             front = 0;
         rear = (rear + 1) % SIZE;
@@ -56,6 +88,7 @@ void enQueue(int interrupt_resources[])
 
             interrupt_wait[rear][i] = interrupt_resources[i];
         }
+        pthread_mutex_unlock(&mutex);
         display();
         printf("\n[th q] Inserted Interrupt : %d", interrupt_resources[0]);
     }

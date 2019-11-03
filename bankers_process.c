@@ -67,7 +67,6 @@ void *process_main(void *arg)
                     memset(buf,0,99);
                     sprintf(buf,"P%d",i);
                     log_message("PROCESS_EXECUTED",buf);
-                    printf("BUFFER:%s",buf);
                     //now check if the interrupt wait queue is not empty
                     log_message("CHECKING_INT_QUEUE","");
                     if (isEmpty())
@@ -79,19 +78,22 @@ void *process_main(void *arg)
                         log_message("SUCCESS:INTERRUPT_DETECTED","");
                         //check if the interrupt can be granted
                         processed_first = -1;
+                        printf("BEFIRE WHILE SIZE OF INT_Q - %d",getSize());
                         while (!isEmpty())
                         {
+                            if (topInterruptId() == processed_first)
+                            {
+                                printf("BEFORE TERMITATION_CHECK : SIZE OF INT_Q - %d",getSize());                          
+                                printf("PROCESSED_ALL_WAITING_INTERRUPTS\n");
+                                break;
+                            }
 
                             temp_ptr = deQueue();
                             for (x=0;x<4;x++)
                             {
                                 temp_arr[x]= *(int*)(temp_ptr + x);
                             }
-
-                            if (temp_arr[0] == processed_first)
-                            {
-                                break;
-                            }
+                            
                             memset(buf,0,99);
                             sprintf(buf,"%d",temp_arr[0]);
                             log_message("CHECKING_RESOURCE_REQ_OF",buf);
@@ -112,7 +114,7 @@ void *process_main(void *arg)
                             printf("\ntemp array[3] %d",temp_arr[3]);
                             printf("\n");
                             //couldnt find a way to convert arrays of avail and temp_arr into strings and call log_message 
-
+                            not_en=0;
                             for (x = 1; x < m + 1; x++)
                             {
                                 if (temp_arr[x] > avail[x-1])
@@ -127,7 +129,8 @@ void *process_main(void *arg)
                                 // sprintf(buf,"%d",temp_arr[0]);
                                 printf("FAILED_NOT_ENOUGH_RESOURCES_PUSH_BACK_AGAIN","");
                                 fflush(stdout);
-                                processed_first = temp_arr[0];
+                                if (processed_first==-1)
+                                    processed_first = temp_arr[0];
                                 enQueue(temp_arr);
                             }
 
