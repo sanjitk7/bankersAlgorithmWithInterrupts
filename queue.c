@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "queue.h"
+#include "common.h"
 
 //int interrupt_resources[SIZE][3];//3 is the number of resources
 int front = -1;
@@ -9,13 +10,13 @@ int interrupt_wait[SIZE][4];
 void display()
 {
     int i, j;
-    printf("\nDISPLAYING INTERRUPT\n");
+    printf("\n[th %d] DISPLAYING INTERRUPT\n",(int)pthread_self());
     if (isEmpty())
-        printf(" \n Empty Queue\n");
+        printf(" \n[th ] Empty Queue\n");
     else
     {
-        printf("\n Front -> %d ", front);
-        printf("\n interrupt_wait:\n ");
+        printf("\n[th %d] Front -> %d ",(int)pthread_self());
+        printf("\n[th %d] interrupt_wait:\n ",(int)pthread_self());
         for (i = front; i != rear + 1; i = (i + 1) % SIZE)
         {
             for (j = 0; j < 4; j++)
@@ -24,7 +25,7 @@ void display()
             }
             printf("\n");
         }
-        printf("\n Rear -> %d \n", rear);
+        printf("\n[th q] Rear -> %d \n", rear);
     }
 }
 
@@ -44,7 +45,7 @@ void enQueue(int interrupt_resources[])
 {
     int i = 0;
     if (isFull())
-        printf("\n Interrupt Queue is full!! \n");
+        printf("\n[th q] Interrupt Queue is full!! \n");
     else
     {
         if (front == -1)
@@ -56,7 +57,7 @@ void enQueue(int interrupt_resources[])
             interrupt_wait[rear][i] = interrupt_resources[i];
         }
         display();
-        printf("\n Inserted Interrupt : %d", interrupt_resources[0]);
+        printf("\n[th q] Inserted Interrupt : %d", interrupt_resources[0]);
     }
 }
 int* deQueue()
@@ -64,7 +65,7 @@ int* deQueue()
     int i,send_top_arr[4];
     if (isEmpty())
     {
-        printf("\n Interrupt Queue is empty !! \n");
+        printf("\n[th q] Interrupt Queue is empty !! \n");
         return (-1);
     }
     else
@@ -72,7 +73,7 @@ int* deQueue()
         for (i=0;i<4;i++){
             send_top_arr[i]=interrupt_wait[front][i];
         }
-        printf("\n Deleted interrupt PID -> %d \n", interrupt_wait[front][0]);
+        printf("\n[th q] From QUEQUE Deleted interrupt PID -> %d \n", interrupt_wait[front][0]);
         if (front == rear)
         {
             front = -1;

@@ -1,14 +1,17 @@
 //a circular queue
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include "queue.h"
+#include "common.h"
 
 void *process_main(void *arg)
 {
     // P0, P1, P2, P3, P4 are the Process names here
 
-    int n, m, i, j, k, x, interrupt_choice,processed_first, temp, interrupt_count = 0, not_en = 0;
-    int* temp_arr;
+    int n, m, i, j, k, x, interrupt_choice, processed_first, temp, interrupt_count = 0, not_en = 0;
+    int *temp_ptr;
+    int temp_arr[4];
     n = 5;                         // Number of processes
     m = 3;                         // Number of resources
     int alloc[5][3] = {{0, 1, 0},  // P0    // Allocation Matrix
@@ -60,92 +63,74 @@ void *process_main(void *arg)
                     for (y = 0; y < m; y++)
                         avail[y] += alloc[i][y]; //resource is freed up
                     f[i] = 1;                    //set finish to 1
-                    printf("Process %d is Executed\n", i);
-                    //----------------------------------------------------------------------------------------------------------------------------------
-
-                    //dont randomly populate but ask user for hardware interrupt and resources for now
-                    /*
-                interrupt_choice=0;
-                printf("\nDear User Do you want to initiate a hardware interrupt? 1. Yes 2. No\n");
-                scanf("%d",&interrupt_choice);
-                if (interrupt_choice==1){
-                    printf("Enter PID:");
-                    scanf("%d",&temp);
-                    enQueue(temp);
-                    display();
-                    ++interrupt_count;
-                }
-                else{
-                    printf("Checking the interrupt queue...\n");
-                }
-                */
-
+                    sleep(1);
+                    memset(buf,0,99);
+                    sprintf(buf,"P%d",i);
+                    log_message("PROCESS_EXECUTED",buf);
+                    printf("BUFFER:%s",buf);
                     //now check if the interrupt wait queue is not empty
+                    log_message("CHECKING_INT_QUEUE","");
                     if (isEmpty())
                     {
-                        printf("\nNo waiting interrupt Detected! So resuming execution of safe sequence...");
+                        log_message("FAILED:NO_INTERRUPT","");
                     }
                     else
                     {
-                        printf("\nInterrupt Detected!");
-                        //check if the interrupt can be granted                        
-                        processed_first=-1;
-                        while(!isEmpty()){
-                        
-                        temp_arr=deQueue();
-                        if (temp_arr[0]==processed_first)
-                            break;
-                            printf("\nChecking %d Resource Req\n",temp_arr[0]);
+                        printf("\n [thread 1] Interrupt Detected!");
+                        //check if the interrupt can be granted
+                        processed_first = -1;
+                        while (!isEmpty())
+                        {
+
+                            temp_ptr = deQueue();
+                            for (x=0;x<4;x++)
+                            {
+                                temp_arr[x]= *(int*)(temp_ptr + x);
+                            }
+
+                            if (temp_arr[0] == processed_first)
+                            {
+                                break;
+                            }
+                            printf("\n[thread 1]Checking %d Resource Req\n", temp_arr[0]);
                             fflush(stdout);
-                            for (x=1;x<m+1;x++){
-                                if (interrupt_wait[front][x]>avail[x]){
-                                    not_en=1;
+                            //log_message("check_res_req");
+                            printf("Available is:");
+                            for (x=0;x<3;x++)
+                                printf("%d\t",avail[x]);
+                            printf("\ntemp_arr:");
+                            printf("temp array[0] %d",temp_arr[0]);
+                            printf("temp array[1] %d",temp_arr[1]);
+                            printf("temp array[2] %d",temp_arr[2]);
+                            printf("temp array[3] %d",temp_arr[3]);
+                            printf("\n");
+                            
+                            for (x = 1; x < m + 1; x++)
+                            {
+                                if (temp_arr[x] > avail[x-1])
+                                {
+                                    not_en = 1;
                                     break;
                                 }
-                            if (not_en==1){
-                                printf("Interrupt %d Cannot be executed: Not enough resources. Waiting for resources to be freed\n",temp_arr[0]);
+                            }
+                            if (not_en == 1)
+                            {
+                                printf("[th 1]]nterrupt %d Cannot be executed: Not enough resources. Waiting for resources to be freed\n", temp_arr[0]);
                                 fflush(stdout);
-                                processed_first=temp_arr[0];
-                                //enQueue(temp_arr);
+                                processed_first = temp_arr[0];
+                                enQueue(temp_arr);
                             }
-                        
-                            if (not_en==0){
-                                printf("Interrupt %d is executed now! Resources are used and freed immedietly\n",temp_arr[0]);
-                                fflush(stdout);
-                                
-                        }
-                            }
-                        }
-                        /*for (x=1;x<4;x++){
-                            if (interrupt_wait[front][x]>avail[x]){
-                                not_en=1;
-                                break;
-                                }
-                            }
-                        if (not_en==1)
-                            printf("Interrupt Cannot be executed: Not enough resources. Waiting for resources to be freed\n");     
-                        
-                        if (not_en==0){
-                            printf("Interrupt %d is executed now! Resources are used and freed immedietly\n",interrupt_wait[front][0]);
-                            deQueue();
-                            display();
-                        }*/
 
-                        /*if (interrupt_resources>avail)
-                        printf("Interrupt cant be executed now it has to wait in queue until resources are freed");
-                    else{
-                        printf("The interrupt %d is executed.")
-                        //remove the interrupt from the interrupt_wait q
-                        dequeue()
-                    }*/
-                        //since interrupt is granted, executed in one go - no need to change the resource part
+                            if (not_en == 0)
+                            {
+                                printf("[th 1]Interrupt %d is executed now! Resources are used and freed immedietly\n", temp_arr[0]);
+                                fflush(stdout);
+                            }
+                        }
                     }
-                    //------------------------------------------------------------------------------------------------------------------------------------------------------------
                 }
             }
         }
-        sleep(1);
-        fflush(stdout);
     }
     /*if (!isEmpty()){
     printf("\nInterrupt %d could not be granted because required resources are too high!!\n",interrupt_wait[front][0]);

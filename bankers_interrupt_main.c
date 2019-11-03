@@ -5,7 +5,7 @@
 #include "queue.h"
 #include "interrupt_create.h"
 #include "bankers_process.h"
-
+#include "common.h"
 int main()
 {
     pthread_t thread_banker, thread_interrupt;

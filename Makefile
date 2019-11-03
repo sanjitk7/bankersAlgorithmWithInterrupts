@@ -13,4 +13,4 @@ $(EXEC): $(OBJ)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJ) $(LBLIBS)
 
 clean:
-	rm -rf $(OBJ) $(EXEC)
+	rm -rf *.o $(EXEC)
