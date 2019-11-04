@@ -18,6 +18,8 @@ int main()
         return 0;
     }
 
+    fprintf(logfile, "Thread Id, Timestamp in Microsecs, Event, Detail\n");
+
     memset(buf, 0, 99);
     sprintf(buf, "%d", (int)pthread_self());
     log_message("START_PROCESSING", buf);
