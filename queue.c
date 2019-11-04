@@ -28,6 +28,11 @@ void display()
             }
             printf("\n");
         }
+        for (j=0;j<4;j++)
+        {
+            printf("%d\t",interrupt_wait[rear][j]);
+        }
+        printf("\n"); 
         printf("\n[%d] REAR :%d\n", (int)pthread_self(), rear);
         fflush(stdout);
     }
