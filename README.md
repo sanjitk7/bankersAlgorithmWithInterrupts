@@ -1,45 +1,60 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# Project Overview
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+Aims to incorporate interrupt handling ablility to banker's algorithm, therby creating a modified banker's algorithm that can check for and handle interrupts during normal working (for deadlock prevention).
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+Used pthreads.h for multi-threading for simulating the working of the algorithm with random interrupt generation(random resource need for each interrupt) at random intravels. 
 
----
+More about [bankers algorithm](https://www.geeksforgeeks.org/bankers-algorithm-in-operating-system-2/)
 
-## Edit a file
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+## Project Architecture
+<img src=images/os_flowchart.jpg>
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+![](images/os_flowchart.jpg width="400" height="400")
 
----
+## Part 1: Random Interrupts Generation
 
-## Create a file
+The first thread, continuously randomly generates interrupts in random intravals which is stored in a global circular queue. Random interrupts are each if the form of an array with PID followed by its resouce requirements. This inturn in stored in the global circular queue. Each start of the thread is logged to the console.
 
-Next, you’ll add a new file to this repository.
+## Part 2: Modified Banker's Algorithm
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+The second thread runs the modified bankers algorithm that checks for interupts in the queue and handles them if they exit. And if not they continue with the deadlock avoidance policy and safety sequence generation.
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+1. After every process is executed during safety sequence generation, the interrupt global queue is checked.
+2. If interrupt is detected:
+    1. Check if the OS has enough resouces in AVAILABLE to grant the interrupt its resources.
+    2. If enough resources are available, then they are granted so that the interrupt can execute and free the ressources.
+    3. If not enough resources are available, push back the interrupt to back of the queue and check for the next interrupt.
+    4. If no interrupt can be executed, continue with the bankers safety sequence execution so that resouces can free up in the future.
+3. if no interrupt is generated, continue with the bankers algorithm
+4. If all processes in bankers table has not been executed yet, then go back and continue bankers algorithm.
+5. Display final safety sequence.
 
----
+## Recording the events
 
-## Clone a repository
+All the steps of the modified banker's algorithm is recorded by writing to a seperate csv file, that includes all the events and its detatils.
+The starting and terminating of the threads, the success and failiure of the interrupt granting is logged to the console.
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+## Displaying the Events
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+To display the working, this simulation ends by displaying the csv file that was written on program execution as a html file with the help of a python script, a node server and a shell script.
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+ # Installation Steps for Mac
+
+**Install GCC Compiler for C compilation**
+```bash
+brew install gcc
+```
+
+**Install python**
+```bash
+brew install python3
+```
+**Install nodejs**
+
+Install nodeJS from this [site](https://nodejs.org/en/download/)
+
+**Open terminal and go to the project directory to run:**
+```bash
+./exec.sh
+```
